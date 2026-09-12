@@ -12,10 +12,9 @@ const PORT = Number(process.env.PORT || 3000);
 const HOST = '0.0.0.0';
 const JWT_SECRET = process.env.JWT_SECRET || 'CHANGE_ME_MUZOFUN_SECRET';
 const DATA_DIR = process.env.DATA_DIR || '/data';
-const PUBLIC_DIR = __dirname;
+const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 const LOCAL_UPLOAD_DIR = path.join(__dirname, 'data', 'uploads');
 const finalUploadDir = (() => { try { fs.mkdirSync(UPLOAD_DIR,{recursive:true}); fs.accessSync(UPLOAD_DIR,fs.constants.W_OK); return UPLOAD_DIR; } catch { fs.mkdirSync(LOCAL_UPLOAD_DIR,{recursive:true}); return LOCAL_UPLOAD_DIR; }})();
-const PUBLIC_DIR = path.join(__dirname, 'public');
 fs.mkdirSync(finalUploadDir,{recursive:true});
 
 app.set('trust proxy', 1);
@@ -135,10 +134,24 @@ app.post('/api/playlists', requireDb, auth, async(req,res)=>{const name=String(r
 app.post('/api/playlists/:id/tracks/:trackId', requireDb, auth, async(req,res)=>{const p=await pool.query('SELECT id FROM playlists WHERE id=$1 AND user_id=$2',[req.params.id,req.user.id]);if(!p.rowCount)return res.status(404).json({error:'Плейлист не найден'});await pool.query('INSERT INTO playlist_tracks(playlist_id,track_id) VALUES($1,$2) ON CONFLICT DO NOTHING',[req.params.id,req.params.trackId]);res.json({ok:true});});
 app.get('/uploads/:file', (req,res)=>{const file=path.basename(req.params.file);const p=path.join(finalUploadDir,file);if(!p.startsWith(finalUploadDir+path.sep))return res.sendStatus(400);if(!fs.existsSync(p))return res.sendStatus(404);res.sendFile(p);});
 
-app.use(express.static(PUBLIC_DIR,{extensions:['html']}));
+// Раздаём статичные файлы из public, если папка есть
+if (fs.existsSync(path.join(__dirname, 'public'))) {
+  app.use(express.static(path.join(__dirname, 'public')));
+}
 
-// ИСПРАВЛЕННЫЙ РОУТ (подходит для любых новых версий Express)
-app.get('/{*path}',(req,res)=>res.sendFile(path.join(PUBLIC_DIR,'index.html')));
+// Отдаем index.html из корня или из папки public
+app.get('/{*path}', (req, res) => {
+  const publicIndex = path.join(__dirname, 'public', 'index.html');
+  const rootIndex = path.join(__dirname, 'index.html');
+  
+  if (fs.existsSync(publicIndex)) {
+    return res.sendFile(publicIndex);
+  } else if (fs.existsSync(rootIndex)) {
+    return res.sendFile(rootIndex);
+  } else {
+    return res.status(404).send('index.html not found');
+  }
+});
 
 app.use((err,req,res,next)=>{console.error(err);res.status(400).json({error:err.message||'Ошибка запроса'});});
 
