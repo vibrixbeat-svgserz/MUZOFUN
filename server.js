@@ -136,7 +136,10 @@ app.post('/api/playlists/:id/tracks/:trackId', requireDb, auth, async(req,res)=>
 app.get('/uploads/:file', (req,res)=>{const file=path.basename(req.params.file);const p=path.join(finalUploadDir,file);if(!p.startsWith(finalUploadDir+path.sep))return res.sendStatus(400);if(!fs.existsSync(p))return res.sendStatus(404);res.sendFile(p);});
 
 app.use(express.static(PUBLIC_DIR,{extensions:['html']}));
-app.get('*',(req,res)=>res.sendFile(path.join(PUBLIC_DIR,'index.html')));
+
+// ИСПРАВЛЕННАЯ СТРОЧКА (было '*', стало '(.*)')
+app.get('(.*)',(req,res)=>res.sendFile(path.join(PUBLIC_DIR,'index.html')));
+
 app.use((err,req,res,next)=>{console.error(err);res.status(400).json({error:err.message||'Ошибка запроса'});});
 
 initDb().then(()=>{if(pool) console.log('PostgreSQL: connected'); else console.log('PostgreSQL: not configured'); app.listen(PORT,HOST,()=>console.log(`MUZOFUN listening on ${HOST}:${PORT}`));}).catch(e=>{console.error('Database init failed:',e);app.listen(PORT,HOST,()=>console.log(`MUZOFUN listening on ${HOST}:${PORT} (DB unavailable)`));});
