@@ -12,7 +12,7 @@ const PORT = Number(process.env.PORT || 3000);
 const HOST = '0.0.0.0';
 const JWT_SECRET = process.env.JWT_SECRET || 'CHANGE_ME_MUZOFUN_SECRET';
 const DATA_DIR = process.env.DATA_DIR || '/data';
-const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
+const PUBLIC_DIR = __dirname;
 const LOCAL_UPLOAD_DIR = path.join(__dirname, 'data', 'uploads');
 const finalUploadDir = (() => { try { fs.mkdirSync(UPLOAD_DIR,{recursive:true}); fs.accessSync(UPLOAD_DIR,fs.constants.W_OK); return UPLOAD_DIR; } catch { fs.mkdirSync(LOCAL_UPLOAD_DIR,{recursive:true}); return LOCAL_UPLOAD_DIR; }})();
 const PUBLIC_DIR = path.join(__dirname, 'public');
