@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>MUZOFUN</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050507;--s1:#0c0c10;--s2:#121218;--s3:#1a1a22;
+  --line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.12);
+  --t:#fafafa;--m:#9ca3af;--d:#6b7280;
+  --c:#22d3ee;--c2:#67e8f9;--cg:rgba(34,211,238,.25);
+  --g:#4ade80;--gold:#fbbf24;--r:#f43f5e;
+  --ease:cubic-bezier(.16,1,.3,1);--safe:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;height:100dvh;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--t);overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 100% 80% at 50% -30%,rgba(34,211,238,.09),transparent 55%),radial-gradient(ellipse 50% 40% at 100% 50%,rgba(244,63,94,.04),transparent);pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;height:100dvh}
+
+.hdr{flex-shrink:0;height:54px;display:flex;align-items:center;gap:10px;padding:0 14px;background:rgba(5,5,7,.8);backdrop-filter:blur(24px);border-bottom:1px solid var(--line);z-index:40}
+.logo{font-weight:800;font-size:1.1rem;letter-spacing:-.5px;color:var(--t)}
+.logo span{color:var(--c)}
+.srch{flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:8px 12px;transition:.25s var(--ease)}
+.srch:focus-within{border-color:rgba(34,211,238,.45);box-shadow:0 0 0 3px var(--cg)}
+.srch svg{width:15px;height:15px;color:var(--d);flex-shrink:0}
+.srch input{flex:1;min-width:0;background:none;border:none;outline:none;color:var(--t);font:inherit;font-size:.85rem}
+.srch input::placeholder{color:var(--d)}
+.hb{height:34px;padding:0 12px;border-radius:10px;border:1px solid var(--line2);background:var(--s2);color:var(--t);font:inherit;font-size:.7rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.2s var(--ease);flex-shrink:0;letter-spacing:.02em}
+.hb:active{transform:scale(.96)}
+.hb.pro{background:linear-gradient(135deg,rgba(34,211,238,.2),rgba(34,211,238,.05));border-color:rgba(34,211,238,.4);color:var(--c2)}
+.hb.pro.on{background:linear-gradient(135deg,#0891b2,#22d3ee);border:none;color:#042f2e;box-shadow:0 4px 18px var(--cg)}
+
+.main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px;min-height:0}
+.main::-webkit-scrollbar{width:0}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.an{animation:up .45s var(--ease) both}
+
+.sec{margin-bottom:26px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-t{font-size:1.15rem;font-weight:700;letter-spacing:-.3px}
+.sec-a{font-size:.7rem;font-weight:600;color:var(--c);text-transform:uppercase;letter-spacing:.5px;cursor:pointer}
+
+.hero{border-radius:18px;overflow:hidden;margin-bottom:20px;position:relative;border:1px solid var(--line);animation:scaleIn .5s var(--ease)}
+.hero-blur{position:absolute;inset:0;opacity:.4;filter:blur(48px) saturate(1.4);transform:scale(1.4);pointer-events:none}
+.hero-blur img{width:100%;height:100%;object-fit:cover}
+.hero-body{position:relative;padding:20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;background:linear-gradient(180deg,rgba(12,12,16,.3),rgba(5,5,7,.85))}
+.hero-art{width:128px;height:128px;border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.6);border:1px solid var(--line2)}
+.hero-art img{width:100%;height:100%;object-fit:cover}
+.hero-tag{font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--c)}
+.hero h1{font-size:1.5rem;font-weight:800;letter-spacing:-.4px;line-height:1.15}
+.hero-sub{font-size:.84rem;color:var(--m)}
+.hero-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;border-radius:12px;font:inherit;font-weight:650;font-size:.84rem;border:none;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.btn:active{transform:scale(.96)}
+.btn-w{background:#fff;color:#050507;box-shadow:0 4px 20px rgba(255,255,255,.1)}
+.btn-g{background:transparent;color:var(--t);border:1px solid var(--line2)}
+.btn-c{background:linear-gradient(135deg,#0891b2,#22d3ee);color:#042f2e;box-shadow:0 6px 24px var(--cg)}
+.btn-block{width:100%}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+@media(min-width:520px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:800px){.grid{grid-template-columns:repeat(4,1fr)}}
+.card{background:var(--s2);border:1px solid var(--line);border-radius:14px;padding:9px;cursor:pointer;transition:.3s var(--ease);animation:up .4s var(--ease) both}
+.card:nth-child(1){animation-delay:.03s}.card:nth-child(2){animation-delay:.06s}.card:nth-child(3){animation-delay:.09s}
+.card:active{transform:scale(.97)}
+@media(hover:hover){.card:hover{border-color:var(--line2);transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.4)}.card:hover .fab{opacity:1;transform:scale(1)}.card:hover .cov img{transform:scale(1.06)}}
+.cov{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--s3);margin-bottom:8px}
+.cov img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .55s var(--ease)}
+.fab{position:absolute;right:6px;bottom:6px;width:30px;height:30px;border-radius:50%;background:var(--c);border:none;color:#042f2e;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.75);transition:.25s var(--ease);box-shadow:0 4px 14px var(--cg)}
+.fab svg{width:12px;height:12px;margin-left:1px}
+.bdg{position:absolute;top:6px;left:6px;font-size:.52rem;font-weight:800;letter-spacing:.4px;padding:3px 6px;border-radius:6px;background:linear-gradient(135deg,#0891b2,#22d3ee);color:#042f2e;z-index:2}
+.ct{font-weight:650;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ca{font-size:.72rem;color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.cm{display:flex;align-items:center;justify-content:space-between;margin-top:6px;font-size:.68rem;color:var(--d)}
+.lk{display:flex;align-items:center;gap:3px;cursor:pointer}.lk.on{color:var(--r)}.lk svg{width:11px;height:11px}
+.tg{background:rgba(255,255,255,.05);padding:2px 6px;border-radius:5px;font-size:.56rem;text-transform:uppercase;letter-spacing:.3px}
+
+.list{display:flex;flex-direction:column;gap:3px}
+.row{display:flex;align-items:center;gap:11px;padding:9px;border-radius:12px;cursor:pointer;transition:.2s;animation:up .35s var(--ease) both}
+.row:active{background:var(--s2)}
+.rn{width:24px;text-align:center;font-weight:700;font-size:.95rem;color:var(--d)}.rn.t{color:var(--c);text-shadow:0 0 14px var(--cg)}
+.rc{width:42px;height:42px;border-radius:8px;overflow:hidden;background:var(--s3);flex-shrink:0}
+.rc img{width:100%;height:100%;object-fit:cover}
+.ri{flex:1;min-width:0}
+.rt{font-weight:650;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ra{font-size:.72rem;color:var(--m)}
+.rl{font-weight:650;font-size:.82rem;color:var(--m);display:flex;align-items:center;gap:4px}.rl.on{color:var(--r)}
+
+.empty{text-align:center;padding:44px 16px;color:var(--m)}.empty h3{color:var(--t);margin-bottom:6px}
+
+.form{background:var(--s2);border:1px solid var(--line);border-radius:16px;padding:18px}
+.fg{margin-bottom:13px}.fg label{display:block;font-size:.7rem;font-weight:650;color:var(--m);margin-bottom:5px;letter-spacing:.3px}
+.fg input,.fg select{width:100%;background:var(--s1);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;color:var(--t);font:inherit;font-size:.88rem;outline:none;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:rgba(34,211,238,.5);box-shadow:0 0 0 3px var(--cg)}
+.cover-up{display:flex;align-items:center;gap:12px}
+.cover-prev{width:72px;height:72px;border-radius:10px;background:var(--s3);border:1px dashed var(--line2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--d);position:relative}
+.cover-prev img{width:100%;height:100%;object-fit:cover}
+.cover-prev svg{width:24px;height:24px}
+.cover-btns{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.file-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;border-radius:10px;background:var(--s3);border:1px solid var(--line2);color:var(--t);font:inherit;font-size:.78rem;font-weight:600;cursor:pointer}
+.file-btn input{display:none}
+.hint{font-size:.7rem;color:var(--d)}
+.fa{display:flex;gap:8px;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
+
+.banner{background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(34,211,238,.03));border:1px solid rgba(34,211,238,.28);border-radius:14px;padding:13px 15px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;animation:up .4s var(--ease)}
+.banner b{color:var(--c2)}
+
+.plans{display:grid;grid-template-columns:1fr;gap:11px}
+@media(min-width:500px){.plans{grid-template-columns:1fr 1fr}}
+.plan{background:var(--s2);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;transition:.25s;animation:up .4s var(--ease) both}
+.plan.hot{border-color:rgba(34,211,238,.45);background:linear-gradient(165deg,rgba(34,211,238,.1),var(--s2) 55%);box-shadow:0 0 36px rgba(34,211,238,.06)}
+.plan h3{font-size:1.05rem;font-weight:700}
+.plan .sub{font-size:.78rem;color:var(--m);margin:2px 0 8px}
+.plan .price{font-size:1.45rem;font-weight:800;color:var(--gold);margin-bottom:10px;letter-spacing:-.4px}
+.plan ul{list-style:none;margin:0 0 14px;flex:1}
+.plan li{font-size:.78rem;color:var(--m);padding:3px 0;display:flex;align-items:center;gap:7px}
+.plan li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--g);box-shadow:0 0 8px rgba(74,222,128,.5)}
+
+.pl{flex-shrink:0;height:66px;background:rgba(12,12,16,.92);backdrop-filter:blur(20px);border-top:1px solid var(--line);display:flex;align-items:center;padding:0 11px;gap:10px;z-index:40;padding-bottom:var(--safe)}
+.pc{width:44px;height:44px;border-radius:9px;background:var(--s3);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--d);border:1px solid var(--line)}
+.pc img{width:100%;height:100%;object-fit:cover}.pc svg{width:16px;height:16px}
+.pi{flex:1;min-width:0}
+.pt{font-weight:650;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pa{font-size:.68rem;color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pctl{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.pb{width:34px;height:34px;border:none;background:none;color:var(--m);display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%}
+.pb svg{width:15px;height:15px}.pb.on{color:var(--r)}
+.pp{width:40px;height:40px;border-radius:50%;background:#fff;border:none;display:flex;align-items:center;justify-content:center;color:#050507;cursor:pointer;box-shadow:0 2px 12px rgba(255,255,255,.08);transition:.2s}
+.pp:active{transform:scale(.93)}.pp svg{width:15px;height:15px}
+.pp .ps{display:none}.pp.on .py{display:none}.pp.on .ps{display:block}
+
+.nav{flex-shrink:0;height:56px;display:flex;justify-content:space-around;align-items:center;background:rgba(5,5,7,.92);backdrop-filter:blur(20px);border-top:1px solid var(--line);z-index:40;padding-bottom:var(--safe)}
+.ni{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--d);font-size:.58rem;font-weight:500;background:none;border:none;cursor:pointer;padding:5px 8px;font:inherit;min-width:50px;transition:.2s}
+.ni svg{width:20px;height:20px;transition:transform .25s var(--ease),color .2s}
+.ni.on{color:var(--t)}.ni.on svg{color:var(--c);transform:scale(1.06)}
+
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:center;z-index:100;backdrop-filter:blur(10px)}
+.ov.open{display:flex;animation:fi .25s ease}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.sheet{background:var(--s1);border-radius:18px 18px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:20px 16px calc(20px + var(--safe));border:1px solid var(--line);border-bottom:none;animation:su .35s var(--ease)}
+@keyframes su{from{transform:translateY(36px);opacity:0}to{transform:none;opacity:1}}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sh h2{font-size:1.15rem;font-weight:700}
+.xx{width:32px;height:32px;border-radius:50%;border:none;background:var(--s2);color:var(--m);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.xx svg{width:14px;height:14px}
+
+.toast{position:fixed;bottom:148px;left:50%;transform:translateX(-50%);background:rgba(18,18,24,.96);backdrop-filter:blur(12px);border:1px solid var(--line2);color:var(--t);padding:10px 18px;border-radius:999px;font-weight:650;font-size:.82rem;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.45);animation:ti .35s var(--ease);max-width:90vw}
+@keyframes ti{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+@media(min-width:900px){
+  .app{flex-direction:row;flex-wrap:wrap}
+  .side{display:flex;flex-direction:column;width:220px;border-right:1px solid var(--line);padding:20px 10px;height:100%;background:rgba(5,5,7,.5);flex-shrink:0}
+  .side .logo{font-size:1.3rem;padding:0 10px 24px}
+  .side .ni{flex-direction:row;gap:11px;font-size:.88rem;padding:10px 12px;border-radius:10px;width:100%;justify-content:flex-start}
+  .side .ni.on{background:var(--s2)}.side .ni.on svg{transform:none}
+  .col{flex:1;display:flex;flex-direction:column;height:100%;min-width:0}
+  .nav{display:none}.hdr{height:58px;padding:0 20px}.main{padding:20px 26px}
+  .hero-body{flex-direction:row;text-align:left;padding:26px;gap:22px}
+  .hero-art{width:150px;height:150px}.hero h1{font-size:1.9rem}.hero-acts{justify-content:flex-start}
+  .pl{width:100%;order:3}
+}
+@media(max-width:899px){.side{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="logo">MUZO<span>FUN</span></div>
+  <button class="ni on" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Главная</button>
+  <button class="ni" data-v="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Поиск</button>
+  <button class="ni" data-v="rankings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>Рейтинг</button>
+  <button class="ni" data-v="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Библиотека</button>
+  <button class="ni" data-v="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить</button>
+  <button class="ni" data-v="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>PREMIUM</button>
+</aside>
+<div class="col" style="flex:1;display:flex;flex-direction:column;min-height:0;min-width:0">
+<header class="hdr">
+  <div class="logo">MUZO<span>FUN</span></div>
+  <div class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="q" placeholder="Поиск..."></div>
+  <button class="hb pro" id="pb">PREMIUM</button>
+</header>
+<div class="main" id="c"></div>
+<footer class="pl">
+  <div class="pc" id="pcov"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+  <div class="pi"><div class="pt" id="pt">Выберите трек</div><div class="pa" id="pa">—</div></div>
+  <div class="pctl">
+    <button class="pb" id="plk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    <button class="pb" id="ppr"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+    <button class="pp" id="ppl"><svg class="py" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><svg class="ps" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+    <button class="pb" id="pnx"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+  </div>
+</footer>
+<nav class="nav">
+  <button class="ni on" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Главная</button>
+  <button class="ni" data-v="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Поиск</button>
+  <button class="ni" data-v="rankings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>Рейтинг</button>
+  <button class="ni" data-v="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Моё</button>
+  <button class="ni" data-v="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить</button>
+</nav>
+</div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id), box=$('c');
+let token=localStorage.getItem('mf_token')||'', me=null, tracks=[], cur=null, playing=false, view='home', q='';
+const audio=new Audio(); audio.preload='metadata';
+const ICON=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}
+function toast(m){document.querySelector('.toast')?.remove();const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+function img(url,cls=''){return url?`<img class="${cls}" src="${esc(url)}" alt="" onerror="this.style.display='none'">`:`<div class="noart ${cls}">${ICON}</div>`}
+async function api(url,opt={}){const headers=opt.headers||{};if(token)headers.Authorization='Bearer '+token;opt.headers=headers;const r=await fetch(url,opt);let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||'Ошибка сервера');return d}
+function authUI(){
+ if(document.querySelector('.auth-modal'))return;
+ const e=document.createElement('div');e.className='auth-modal';e.innerHTML=`<div class="auth-card"><div class="auth-logo">MUZO<span>FUN</span></div><div class="auth-tabs"><button data-a="login" class="on">Войти</button><button data-a="register">Регистрация</button></div><form id="authForm"><div class="fg"><label>Логин</label><input id="au" autocomplete="username" required></div><div class="fg" id="nameFg" style="display:none"><label>Имя</label><input id="an" maxlength="80"></div><div class="fg"><label>Пароль</label><input id="ap" type="password" minlength="8" autocomplete="current-password" required></div><button class="btn btn-c btn-block" type="submit" id="authSubmit">Войти</button></form><div class="auth-note">Аккаунт нужен для загрузки музыки, лайков и личной библиотеки.</div></div>`;document.body.appendChild(e);
+ let mode='login';e.querySelectorAll('.auth-tabs button').forEach(b=>b.onclick=()=>{mode=b.dataset.a;e.querySelectorAll('.auth-tabs button').forEach(x=>x.classList.toggle('on',x===b));$('nameFg').style.display=mode==='register'?'block':'none';$('authSubmit').textContent=mode==='register'?'Создать аккаунт':'Войти'});
+ $('authForm').onsubmit=async ev=>{ev.preventDefault();try{const d=await api('/api/auth/'+mode,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:$('au').value,password:$('ap').value,displayName:$('an').value})});token=d.token;localStorage.setItem('mf_token',token);me=d.user;e.remove();toast('Добро пожаловать в MUZOFUN');await refresh();}catch(err){toast(err.message)}};
+}
+async function refresh(){try{if(token){const d=await api('/api/me');me=d.user}else me=null}catch{token='';localStorage.removeItem('mf_token');me=null} await loadTracks(); render(view)}
+async function loadTracks(){try{const d=await api('/api/tracks?q='+encodeURIComponent(q));tracks=d.tracks||[]}catch(e){tracks=[];toast(e.message)}}
+function card(t){return `<article class="card" data-id="${t.id}"><div class="cov">${img(t.cover_url)}<button class="fab" data-play="${t.id}">${ICON}</button></div><div class="ct">${esc(t.title)}</div><div class="ca">${esc(t.artist)}</div><div class="cm"><span class="lk ${t.liked?'on':''}" data-like="${t.id}">♡ ${t.like_count||0}</span><span class="tg">${esc(t.genre)}</span></div></article>`}
+function row(t,i){return `<div class="row" data-id="${t.id}"><div class="rn ${i<3?'t':''}">${i+1}</div><div class="rc">${img(t.cover_url)}</div><div class="ri"><div class="rt">${esc(t.title)}</div><div class="ra">${esc(t.artist)}</div></div><div class="rl">▶ ${Number(t.plays||0)}</div></div>`}
+function home(){const top=[...tracks].sort((a,b)=>Number(b.plays)-Number(a.plays));const recent=[...tracks].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));const hero=top[0];return `${hero?`<section class="hero"><div class="hero-blur">${img(hero.cover_url)}</div><div class="hero-body"><div class="hero-art">${img(hero.cover_url)}</div><div><div class="hero-tag">РЕАЛЬНЫЕ ТРЕКИ · ОТ ПОЛЬЗОВАТЕЛЕЙ</div><h1>${esc(hero.title)}</h1><div class="hero-sub">${esc(hero.artist)} · ${Number(hero.plays||0)} прослушиваний</div><div class="hero-acts"><button class="btn btn-w" data-play="${hero.id}">▶ Слушать</button><button class="btn btn-g" data-like="${hero.id}">♡ ${hero.like_count||0}</button></div></div></div></section>`:`<section class="empty"><h3>MUZOFUN только начинает звучать</h3><p>Здесь нет фейковых треков. Загрузите настоящую музыку пользователей.</p><button class="btn btn-c" data-v="add" style="margin-top:14px">Добавить первый трек</button></section>`}<section class="sec"><div class="sec-h"><h2 class="sec-t">Новые треки</h2><span class="sec-a">${recent.length}</span></div>${recent.length?`<div class="grid">${recent.slice(0,12).map(card).join('')}</div>`:`<div class="empty"><p>Пока никто не загрузил музыку.</p></div>`}</section>`}
+function rankings(){const a=[...tracks].sort((x,y)=>Number(y.plays)-Number(x.plays));return `<section class="sec"><div class="sec-h"><h2 class="sec-t">Рейтинг</h2><span class="sec-a">ПРОСЛУШИВАНИЯ</span></div>${a.length?`<div class="list">${a.slice(0,50).map(row).join('')}</div>`:`<div class="empty"><h3>Рейтинг пока пуст</h3><p>Когда появятся настоящие прослушивания, они будут здесь.</p></div>`}</section>`}
+async function library(){if(!me){return `<div class="empty"><h3>Твоя библиотека</h3><p>Войди, чтобы видеть свои треки и плейлисты.</p><button class="btn btn-c" id="loginNow">Войти</button></div>`}try{const d=await api('/api/library');return `<section class="sec"><div class="sec-h"><h2 class="sec-t">Моя музыка</h2><span class="sec-a">${d.tracks.length}</span></div>${d.tracks.length?`<div class="grid">${d.tracks.map(card).join('')}</div>`:`<div class="empty"><h3>Здесь пока пусто</h3><p>Загрузи свой первый настоящий трек.</p><button class="btn btn-c" data-v="add">Добавить музыку</button></div>`}</section><section class="sec"><div class="sec-h"><h2 class="sec-t">Мои плейлисты</h2><button class="btn btn-g" id="newPlaylist">+ Создать</button></div>${d.playlists.length?`<div class="list">${d.playlists.map(p=>`<div class="row"><div class="rc">${ICON}</div><div class="ri"><div class="rt">${esc(p.name)}</div><div class="ra">Плейлист пользователя</div></div></div>`).join('')}</div>`:`<div class="empty"><p>Создай первый плейлист.</p></div>`}</section>`}catch(e){return `<div class="empty"><h3>Не удалось открыть библиотеку</h3><p>${esc(e.message)}</p></div>`}}
+function add(){if(!me)return `<div class="empty"><h3>Войди в аккаунт</h3><p>Только авторизованные пользователи могут публиковать музыку.</p><button class="btn btn-c" id="loginNow">Войти</button></div>`;return `<section class="sec"><div class="sec-h"><h2 class="sec-t">Добавить трек</h2><span class="sec-a">ПУБЛИКАЦИЯ</span></div><form class="form" id="uploadForm"><div class="fg"><label>Название трека</label><input name="title" required maxlength="160" placeholder="Например: Моя новая песня"></div><div class="fg"><label>Исполнитель</label><input name="artist" required maxlength="160" value="${esc(me.display_name||'')}" placeholder="Имя артиста"></div><div class="fg"><label>Жанр</label><select name="genre">${['Rap','Hip-Hop','R&B','Pop','Electronic','Rock','Indie','Ambient','Trap','Drill','Other'].map(x=>`<option>${x}</option>`).join('')}</select></div><div class="fg"><label>Описание</label><input name="description" maxlength="2000" placeholder="Необязательно"></div><div class="fg"><label>Аудио</label><div class="file-btn">Выбрать аудиофайл<input name="audio" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac" required></div><div class="hint">До 100 МБ. Поддерживаются MP3, M4A, AAC, WAV, OGG, FLAC, WebM.</div></div><div class="fg"><label>Обложка</label><div class="file-btn">Выбрать изображение<input name="cover" type="file" accept="image/jpeg,image/png,image/webp"></div><div class="hint">JPG, PNG или WebP.</div></div><div class="fa"><button type="button" class="btn btn-g" data-v="home">Отмена</button><button class="btn btn-c" type="submit">Опубликовать</button></div></form></section>`}
+function searchView(){return `<section class="sec"><div class="sec-h"><h2 class="sec-t">Поиск</h2><span class="sec-a">${tracks.length}</span></div>${tracks.length?`<div class="grid">${tracks.map(card).join('')}</div>`:`<div class="empty"><h3>Ничего не найдено</h3><p>Попробуй название, исполнителя или жанр.</p></div>`}</section>`}
+function render(v=view){view=v;document.querySelectorAll('.ni').forEach(x=>x.classList.toggle('on',x.dataset.v===view));if(view==='home')box.innerHTML=home();else if(view==='rankings')box.innerHTML=rankings();else if(view==='add')box.innerHTML=add();else if(view==='search')box.innerHTML=searchView();else if(view==='library'){box.innerHTML='<div class="empty"><h3>Загрузка…</h3></div>';library().then(x=>{if(view==='library')box.innerHTML=x;});}bind();uiPlayer()}
+function bind(){box.querySelectorAll('[data-play]').forEach(b=>b.onclick=e=>{e.stopPropagation();const t=tracks.find(x=>x.id===b.dataset.play);if(t)play(t)});box.querySelectorAll('[data-like]').forEach(b=>b.onclick=async e=>{e.stopPropagation();if(!me)return authUI();try{await api('/api/tracks/'+b.dataset.like+'/like',{method:'POST'});await loadTracks();render(view)}catch(err){toast(err.message)}});box.querySelectorAll('.card,.row').forEach(el=>el.onclick=()=>{const t=tracks.find(x=>x.id===el.dataset.id);if(t)play(t)});$('loginNow')?.addEventListener('click',authUI);$('uploadForm')?.addEventListener('submit',uploadTrack);$('newPlaylist')?.addEventListener('click',async()=>{const name=prompt('Название плейлиста');if(!name)return;try{await api('/api/playlists',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});render('library')}catch(e){toast(e.message)}})}
+async function uploadTrack(e){e.preventDefault();const f=new FormData(e.currentTarget);const btn=e.currentTarget.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Загрузка…';try{await api('/api/tracks',{method:'POST',body:f});toast('Трек опубликован для всех пользователей');await loadTracks();render('library')}catch(err){toast(err.message)}finally{btn.disabled=false;btn.textContent='Опубликовать'}}
+function play(t){cur=t;playing=true;audio.src=t.audio_url;audio.play().catch(()=>{});api('/api/tracks/'+t.id+'/play',{method:'POST'}).catch(()=>{});uiPlayer();toast('▶ '+t.title)}
+function toggle(){if(!cur){const t=tracks[0];if(t)play(t);return}if(audio.paused){audio.play().catch(()=>{});playing=true}else{audio.pause();playing=false}uiPlayer()}
+function step(d){if(!cur||!tracks.length)return;const i=tracks.findIndex(x=>x.id===cur.id);play(tracks[(i+d+tracks.length)%tracks.length])}
+function uiPlayer(){if(cur){$('pt').textContent=cur.title;$('pa').textContent=cur.artist;$('pcov').innerHTML=img(cur.cover_url);$('plk').classList.toggle('on',!!cur.liked)}$('ppl').classList.toggle('on',playing);$('ppl').querySelector('.py').style.display=playing?'none':'';$('ppl').querySelector('.ps').style.display=playing?'':'none'}
+$('ppl').onclick=toggle;$('ppr').onclick=()=>step(-1);$('pnx').onclick=()=>step(1);$('plk').onclick=async()=>{if(!cur)return;if(!me)return authUI();try{await api('/api/tracks/'+cur.id+'/like',{method:'POST'});await loadTracks();cur=tracks.find(x=>x.id===cur.id)||cur;uiPlayer();render(view)}catch(e){toast(e.message)}};
+audio.onplay=()=>{playing=true;uiPlayer()};audio.onpause=()=>{playing=false;uiPlayer()};audio.onended=()=>step(1);
+document.querySelectorAll('.ni').forEach(n=>n.onclick=async()=>{if(n.dataset.v==='add'&&!me){authUI();return}if(n.dataset.v==='library'&&!me){authUI();return}await loadTracks();render(n.dataset.v)});
+$('q').addEventListener('input',async e=>{q=e.target.value.trim();await loadTracks();render(q?'search':'home')});$('pb').onclick=()=>me?toast('Премиум скоро будет доступен'):authUI();
+const style=document.createElement('style');style.textContent=`.noart{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--c);background:linear-gradient(135deg,#11151a,#071014)}.noart svg{width:28%;height:28%}.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:100;background:#17171d;border:1px solid var(--line2);padding:11px 16px;border-radius:12px;font-size:.8rem;box-shadow:0 12px 35px #000}.auth-modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.78);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:18px}.auth-card{width:min(430px,100%);background:#0d0d12;border:1px solid var(--line2);border-radius:20px;padding:22px;box-shadow:0 25px 70px #000}.auth-logo{font-size:1.4rem;font-weight:800;margin-bottom:18px}.auth-logo span{color:var(--c)}.auth-tabs{display:flex;gap:6px;margin-bottom:18px;background:#08080b;padding:4px;border-radius:11px}.auth-tabs button{flex:1;border:0;background:transparent;color:var(--m);padding:9px;border-radius:8px;font:inherit}.auth-tabs button.on{background:var(--s2);color:var(--t)}.auth-note{font-size:.68rem;color:var(--d);margin-top:12px;text-align:center}`;document.head.appendChild(style);
+refresh();
+})();
+</script>
+</body>
+</html>
