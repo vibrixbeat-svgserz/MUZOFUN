@@ -137,8 +137,8 @@ app.get('/uploads/:file', (req,res)=>{const file=path.basename(req.params.file);
 
 app.use(express.static(PUBLIC_DIR,{extensions:['html']}));
 
-// ИСПРАВЛЕННАЯ СТРОЧКА (было '*', стало '(.*)')
-app.get('(.*)',(req,res)=>res.sendFile(path.join(PUBLIC_DIR,'index.html')));
+// ИСПРАВЛЕННЫЙ РОУТ (подходит для любых новых версий Express)
+app.get('/{*path}',(req,res)=>res.sendFile(path.join(PUBLIC_DIR,'index.html')));
 
 app.use((err,req,res,next)=>{console.error(err);res.status(400).json({error:err.message||'Ошибка запроса'});});
 
